@@ -32,6 +32,7 @@ The driver will work with the following PicoScope models:
 ### Prerequisites
 
 * [MATLAB](https://uk.mathworks.com/products/matlab.html) for Microsoft Windows (32- or 64-bit) or Linux operating systems (64-bit).
+* [Instrument Control Toolbox](http://www.mathworks.co.uk/products/instrument/)
 * The [PicoScope Support Toolbox](http://uk.mathworks.com/matlabcentral/fileexchange/53681-picoscope-support-toolbox)
 
 **Notes:**
@@ -53,6 +54,12 @@ Drivers are available for the following platforms. Refer to the subsections belo
 ### Programmer's Guides
 
 You can download the [Programmer's Guide](https://www.picotech.com/download/manuals/picoscope-4000-series-programmers-guide.pdf) providing a description of the API functions for the ps4000 shared library used by this Instrument Driver.
+
+## Furth information
+
+To view Pico Technology's Hardware Support page, please visit:
+
+http://www.mathworks.co.uk/hardware-support/picoscope.html
 
 ## Obtaining support
 
