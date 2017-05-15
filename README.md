@@ -25,7 +25,7 @@ The driver will work with the following PicoScope models:
 * PicoScope 4226 & 4227 
 * PicoScope 4262
 
-**Note:** For Users with PicoScope 4225, 4425, 4444 and 4824 models, please use the [PicoScope® 4000 Series (A API) - MATLAB® Generic Instrument Driver](http://uk.mathworks.com/matlabcentral/fileexchange/46895-picoscope%C2%AE-4000-series--a-api--matlab%C2%AE-generic-instrument-driver)
+**Note:** For PicoScope 4225, 4425, 4444 and 4824 models, please use the [PicoScope® 4000 Series (A API) - MATLAB® Generic Instrument Driver](http://uk.mathworks.com/matlabcentral/fileexchange/46895-picoscope%C2%AE-4000-series--a-api--matlab%C2%AE-generic-instrument-driver)
 
 ## Getting started
 
