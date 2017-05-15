@@ -55,7 +55,7 @@ Drivers are available for the following platforms. Refer to the subsections belo
 
 You can download the [Programmer's Guide](https://www.picotech.com/download/manuals/picoscope-4000-series-programmers-guide.pdf) providing a description of the API functions for the ps4000 shared library used by this Instrument Driver.
 
-## Furth information
+## Further information
 
 To view Pico Technology's Hardware Support page, please visit:
 
