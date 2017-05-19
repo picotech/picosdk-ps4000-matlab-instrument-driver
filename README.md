@@ -49,7 +49,7 @@ Drivers are available for the following platforms. Refer to the subsections belo
 
 #### Linux
 
-* Follow the instructions from our [Linux Software & Drivers for Oscilloscopes and Data Loggers](https://www.picotech.com/downloads/linux) to install the required `libps4000` and `libpswrappers` driver packages.
+* Follow the instructions from our [Linux Software & Drivers for Oscilloscopes and Data Loggers page](https://www.picotech.com/downloads/linux) to install the required `libps4000` and `libpswrappers` driver packages.
 
 ### Programmer's Guides
 
