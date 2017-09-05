@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series</InstrumentModel>
-   <InstrumentVersion>1.1.5</InstrumentVersion>
+   <InstrumentVersion>1.1.6</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -21,7 +21,7 @@
 % You may copy and distribute this file as long as it remains unmodified. 
 % SB
     
-    fprintf('Copyright (C) 2014 - 2017. Pico Technology Ltd. All rights reserved.\n');
+    fprintf('\nCopyright (C) 2014 - 2017. Pico Technology Ltd. All rights reserved.\n');
     fprintf('\n');
     fprintf('PicoScope 4000 Series MATLAB Instrument Driver\n');
     fprintf('\n');
@@ -1192,24 +1192,35 @@ For further information on the ps4000GetMaxDownSampleRatio function please refer
                <CapabilityGroup>Base</CapabilityGroup>
                <Type>MCode</Type>
                <Code>
-                  <MCode>function [status, timeIntervalNanoSeconds, maxSamples] = ps4000GetTimebase2(obj, timebase, segmentIndex)
+                  <MCode>function [status, timeIntervalNanoseconds, maxSamples] = ps4000GetTimebase2(obj, timebase, segmentIndex)
 % For group functions, OBJ is the group object. For
 % base device functions, OBJ is the device object.
 
-    timeIntervalNanoSeconds = 0;
+    timeIntervalNanoseconds = 0;
     
     numSamples = obj.DriverData.numPreTriggerSamples + ...
         obj.DriverData.numPostTriggerSamples;
     
     maxSamples = 0; % Pass data to return the max samples from the driver
     
-    [status, timeIntervalNanoSeconds, maxSamples] = calllib('ps4000', ...
+    [status, timeIntervalNanoseconds, maxSamples] = calllib('ps4000', ...
         'ps4000GetTimebase2', obj.DriverData.unitHandle, timebase, numSamples, ...
-        timeIntervalNanoSeconds,0, maxSamples, segmentIndex);
+        timeIntervalNanoseconds,0, maxSamples, segmentIndex);
     
-    if(status ~= PicoStatus.PICO_OK)
+    if (status ~= PicoStatus.PICO_OK)
+        
+        % Inform the User that an invalid timebase index has been selected
+        if (status == PicoStatus.PICO_INVALID_TIMEBASE)
            
-        error('ps4000GetTimebase2: error code %d\n', status);
+            warning('PS4000InstrumentDriver:InvalidTimebase', ['Invalid timebase ', ...
+                'index used in call to ps4000GetTimebase2().']);
+            
+        else
+            
+            error('PS4000InstrumentDriver:GetTimebase2', ['ps4000GetTimebase2:- Status code: ', ...
+                '%d. Please refer to the PicoStatus.m file.'], status);
+        
+        end
         
     end
     
@@ -1230,7 +1241,7 @@ segmentIndex: the index of the memory segment to use.
 Output parameters:
 
 status - status code returned by the driver.
-timeIntervalNanoSeconds: the time interval between readings at the selected timebase.
+timeIntervalNanoseconds: the time interval between readings at the selected timebase.
 maxSamples: the maximum number of samples available. 
 
 For further information on the ps4000GetTimebase2 function please refer to the PicoScope 4000 Series PC Oscilloscopes Programmer's Guide.</Description>
