@@ -92,14 +92,14 @@ connect(ps4000DeviceObj);
 % Execute device object function(s).
 [status.setChB] = invoke(ps4000DeviceObj, 'ps4000SetChannel', 1, 0, 1, 8);
 
-if (ps4000DeviceObj.channelCount == 4)
+if (ps4000DeviceObj.channelCount == PicoConstants.QUAD_SCOPE)
 
 	[status.setChC] = invoke(ps4000DeviceObj, 'ps4000SetChannel', 2, 0, 1, 8, 0.0,0);
 	[status.setChD] = invoke(ps4000DeviceObj, 'ps4000SetChannel', 3, 0, 1, 8, 0.0,0);
 	
 end
 
-%% Get Timebase
+%% Verify Timebase Index and Maximum Number of Samples
 % Use the |ps4000GetTimebase2()| function to query the driver as to the
 % suitability of using a particular timebase index and the maximum number
 % of samples available in the segment selected, then set the |timebase|
@@ -114,7 +114,7 @@ end
 
 % Initial call to ps4000GetTimebase2() with parameters:
 %
-% timebase     : 0 
+% timebase     : 2 
 % segment index: 0
 
 status.getTimebase2 = PicoStatus.PICO_INVALID_TIMEBASE;
@@ -207,7 +207,7 @@ downsamplingRatioMode   = ps4000Enuminfo.enRatioMode.RATIO_MODE_NONE;
 figure1 = figure('Name','PicoScope 4000 Series Example - Block Mode Capture', ...
     'NumberTitle','off');
 
-% Calculate time (nanoseconds) and convert to milliseconds
+% Calculate time (nanoseconds) and convert to milliseconds.
 % Use |timeIntervalNanoSeconds| output from the |ps4000GetTimebase2()| 
 % function or calculate it using the main Programmer's Guide.
 % Take into account the downsampling ratio used.
