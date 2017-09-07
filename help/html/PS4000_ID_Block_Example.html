@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PicoScope 4000 Series Instrument Driver Oscilloscope Block Data Capture Example</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-09-05"><meta name="DC.source" content="PS4000_ID_Block_Example.m"><style type="text/css">
+      --><title>PicoScope 4000 Series Instrument Driver Oscilloscope Block Data Capture Example</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-09-07"><meta name="DC.source" content="PS4000_ID_Block_Example.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,10 +66,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>PicoScope 4000 Series Instrument Driver Oscilloscope Block Data Capture Example</h1><!--introduction--><p>This is an example of an instrument control session using a device object. The instrument control session comprises all the steps you are likely to take when communicating with your instrument.</p><p>These steps are:</p><div><ol><li>Create a device object</li><li>Connect to the instrument</li><li>Configure properties</li><li>Invoke functions</li><li>Disconnect from the instrument</li></ol></div><p>To run the instrument control session, type the name of the file, PS4000_ID_Block_Example, at the MATLAB command prompt.</p><p>The file, PS4000_ID_BLOCK_EXAMPLE.M must be on your MATLAB PATH. For additional information on setting your MATLAB PATH, type 'help addpath' at the MATLAB command prompt.</p><p><b>Example:</b>     PS4000_ID_Block_Example;</p><p><b>Description:</b>     Demonstrates how to set properties and call functions in order to     capture a block of data from a PicoScope 4000 Series oscilloscope.</p><p><b>See also:</b> <a href="matlab:doc('icdevice')"><tt>icdevice</tt></a> | <a href="matlab:doc('instrument/invoke')"><tt>invoke</tt></a></p><p><b>Copyright:</b> &copy; 2014-2017 Pico Technology Ltd. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Suggested Input Test Signals</a></li><li><a href="#2">Clear Command Window and Close any Figures</a></li><li><a href="#3">Load Configuration Information</a></li><li><a href="#4">Device Connection</a></li><li><a href="#5">Set Channels</a></li><li><a href="#6">Get Timebase</a></li><li><a href="#7">Set Simple Trigger</a></li><li><a href="#8">Set Block Parameters and Capture Data</a></li><li><a href="#10">Process Data</a></li><li><a href="#11">Stop the Device</a></li><li><a href="#12">Disconnect Device</a></li></ul></div><h2>Suggested Input Test Signals<a name="1"></a></h2><p>This example was published using the following test signals:</p><div><ul><li>Channel A: 2 Vpp, 50 Hz sine wave</li></ul></div><h2>Clear Command Window and Close any Figures<a name="2"></a></h2><pre class="codeinput">clc;
+  </style></head><body><div class="content"><h1>PicoScope 4000 Series Instrument Driver Oscilloscope Block Data Capture Example</h1><!--introduction--><p>This is an example of an instrument control session using a device object. The instrument control session comprises all the steps you are likely to take when communicating with your instrument.</p><p>These steps are:</p><div><ol><li>Create a device object</li><li>Connect to the instrument</li><li>Configure properties</li><li>Invoke functions</li><li>Disconnect from the instrument</li></ol></div><p>To run the instrument control session, type the name of the file, PS4000_ID_Block_Example, at the MATLAB command prompt.</p><p>The file, PS4000_ID_BLOCK_EXAMPLE.M must be on your MATLAB PATH. For additional information on setting your MATLAB PATH, type 'help addpath' at the MATLAB command prompt.</p><p><b>Example:</b>     PS4000_ID_Block_Example;</p><p><b>Description:</b>     Demonstrates how to set properties and call functions in order to     capture a block of data from a PicoScope 4000 Series oscilloscope.</p><p><b>See also:</b> <a href="matlab:doc('icdevice')"><tt>icdevice</tt></a> | <a href="matlab:doc('instrument/invoke')"><tt>invoke</tt></a></p><p><b>Copyright:</b> &copy; 2014-2017 Pico Technology Ltd. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Suggested Input Test Signals</a></li><li><a href="#2">Clear Command Window and Close any Figures</a></li><li><a href="#3">Load Configuration Information</a></li><li><a href="#4">Device Connection</a></li><li><a href="#5">Set Channels</a></li><li><a href="#6">Verify Timebase Index and Maximum Number of Samples</a></li><li><a href="#7">Set Simple Trigger</a></li><li><a href="#8">Set Block Parameters and Capture Data</a></li><li><a href="#10">Process Data</a></li><li><a href="#11">Stop the Device</a></li><li><a href="#12">Disconnect Device</a></li></ul></div><h2 id="1">Suggested Input Test Signals</h2><p>This example was published using the following test signals:</p><div><ul><li>Channel A: 4 Vpp, 50 Hz sine wave</li></ul></div><h2 id="2">Clear Command Window and Close any Figures</h2><pre class="codeinput">clc;
 close <span class="string">all</span>;
-</pre><h2>Load Configuration Information<a name="3"></a></h2><pre class="codeinput">PS4000Config;
-</pre><h2>Device Connection<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Check if an Instrument session using the device object |ps4000DeviceObj|</span>
+</pre><h2 id="3">Load Configuration Information</h2><pre class="codeinput">PS4000Config;
+</pre><h2 id="4">Device Connection</h2><pre class="codeinput"><span class="comment">% Check if an Instrument session using the device object |ps4000DeviceObj|</span>
 <span class="comment">% is still open, and if so, disconnect if the User chooses 'Yes' when prompted.</span>
 <span class="keyword">if</span> (exist(<span class="string">'ps4000DeviceObj'</span>, <span class="string">'var'</span>) &amp;&amp; ps4000DeviceObj.isvalid &amp;&amp; strcmp(ps4000DeviceObj.status, <span class="string">'open'</span>))
 
@@ -198,7 +198,7 @@ Connected to PicoScope 4000 Series device:-
  Maximum sampling rate: 80 MS/s
  Signal Generator Type: None
 
-</pre><h2>Set Channels<a name="5"></a></h2><p>Default driver settings applied to channels are listed below - use the Instrument Driver's <tt>ps4000SetChannel()</tt> function to turn channels on or off and set voltage ranges, coupling, as well as analog offset.</p><pre class="codeinput"><span class="comment">% In this example, data is only collected on channel A so default settings</span>
+</pre><h2 id="5">Set Channels</h2><p>Default driver settings applied to channels are listed below - use the Instrument Driver's <tt>ps4000SetChannel()</tt> function to turn channels on or off and set voltage ranges, coupling, as well as analog offset.</p><pre class="codeinput"><span class="comment">% In this example, data is only collected on channel A so default settings</span>
 <span class="comment">% are used and channel B is switched off. If the PicoScope is a</span>
 <span class="comment">% 4-channel model, channels C and D will also be switched off.</span>
 
@@ -210,15 +210,15 @@ Connected to PicoScope 4000 Series device:-
 <span class="comment">% Execute device object function(s).</span>
 [status.setChB] = invoke(ps4000DeviceObj, <span class="string">'ps4000SetChannel'</span>, 1, 0, 1, 8);
 
-<span class="keyword">if</span> (ps4000DeviceObj.channelCount == 4)
+<span class="keyword">if</span> (ps4000DeviceObj.channelCount == PicoConstants.QUAD_SCOPE)
 
 	[status.setChC] = invoke(ps4000DeviceObj, <span class="string">'ps4000SetChannel'</span>, 2, 0, 1, 8, 0.0,0);
 	[status.setChD] = invoke(ps4000DeviceObj, <span class="string">'ps4000SetChannel'</span>, 3, 0, 1, 8, 0.0,0);
 
 <span class="keyword">end</span>
-</pre><h2>Get Timebase<a name="6"></a></h2><p>Use the <tt>ps4000GetTimebase2()</tt> function to query the driver as to the suitability of using a particular timebase index and the maximum number of samples available in the segment selected, then set the <tt>timebase</tt> property if required.</p><p>To use the fastest sampling interval possible, enable one or two channels and in the case of the PicoScope 4424, turn off all other channels.</p><p>Use a while loop to query the function until the status indicates that a valid timebase index has been selected. In this example, the timebase index of 2 is valid.</p><pre class="codeinput"><span class="comment">% Initial call to ps4000GetTimebase2() with parameters:</span>
+</pre><h2 id="6">Verify Timebase Index and Maximum Number of Samples</h2><p>Use the <tt>ps4000GetTimebase2()</tt> function to query the driver as to the suitability of using a particular timebase index and the maximum number of samples available in the segment selected, then set the <tt>timebase</tt> property if required.</p><p>To use the fastest sampling interval possible, enable one or two channels and in the case of the PicoScope 4424, turn off all other channels.</p><p>Use a while loop to query the function until the status indicates that a valid timebase index has been selected. In this example, the timebase index of 2 is valid.</p><pre class="codeinput"><span class="comment">% Initial call to ps4000GetTimebase2() with parameters:</span>
 <span class="comment">%</span>
-<span class="comment">% timebase     : 0</span>
+<span class="comment">% timebase     : 2</span>
 <span class="comment">% segment index: 0</span>
 
 status.getTimebase2 = PicoStatus.PICO_INVALID_TIMEBASE;
@@ -246,7 +246,7 @@ fprintf(<span class="string">'Timebase index: %d, sampling interval: %.1f ns\n'<
 <span class="comment">% Configure the device |timebase| property value.</span>
 set(ps4000DeviceObj, <span class="string">'timebase'</span>, timebaseIndex);
 </pre><pre class="codeoutput">Timebase index: 2, sampling interval: 50.0 ns
-</pre><h2>Set Simple Trigger<a name="7"></a></h2><p>Set a trigger on channel A, with an auto timeout - the default value for delay is used.</p><pre class="codeinput"><span class="comment">% Trigger properties and functions are located in the Instrument</span>
+</pre><h2 id="7">Set Simple Trigger</h2><p>Set a trigger on channel A, with an auto timeout - the default value for delay is used.</p><pre class="codeinput"><span class="comment">% Trigger properties and functions are located in the Instrument</span>
 <span class="comment">% Driver's Trigger group.</span>
 
 triggerGroupObj = get(ps4000DeviceObj, <span class="string">'Trigger'</span>);
@@ -260,7 +260,7 @@ set(triggerGroupObj, <span class="string">'autoTriggerMs'</span>, 1000);
 <span class="comment">% Direction   : 2 (ps4000Enuminfo.enPS4000ThresholdDirection.PS4000_RISING)</span>
 
 [status.SimpleTrigger] = invoke(triggerGroupObj, <span class="string">'setSimpleTrigger'</span>, 0, 500, 2);
-</pre><h2>Set Block Parameters and Capture Data<a name="8"></a></h2><p>Capture a block of data and retrieve data values for channel A.</p><pre class="codeinput"><span class="comment">% Block data acquisition properties and functions are located in the</span>
+</pre><h2 id="8">Set Block Parameters and Capture Data</h2><p>Capture a block of data and retrieve data values for channel A.</p><pre class="codeinput"><span class="comment">% Block data acquisition properties and functions are located in the</span>
 <span class="comment">% Instrument Driver's Block group.</span>
 
 blockGroupObj = get(ps4000DeviceObj, <span class="string">'Block'</span>);
@@ -299,10 +299,10 @@ getBlockData: Setting up data buffers...
 getBlockData: Retrieving data...
 getBlockData: Assigning data to array and converting to millivolts.
 getBlockData: Data succesfully retrieved.
-</pre><h2>Process Data<a name="10"></a></h2><p>In this example the data values returned from the device are displayed in plots in a Figure.</p><pre class="codeinput">figure1 = figure(<span class="string">'Name'</span>,<span class="string">'PicoScope 4000 Series Example - Block Mode Capture'</span>, <span class="keyword">...</span>
+</pre><h2 id="10">Process Data</h2><p>In this example the data values returned from the device are displayed in plots in a Figure.</p><pre class="codeinput">figure1 = figure(<span class="string">'Name'</span>,<span class="string">'PicoScope 4000 Series Example - Block Mode Capture'</span>, <span class="keyword">...</span>
     <span class="string">'NumberTitle'</span>,<span class="string">'off'</span>);
 
-<span class="comment">% Calculate time (nanoseconds) and convert to milliseconds</span>
+<span class="comment">% Calculate time (nanoseconds) and convert to milliseconds.</span>
 <span class="comment">% Use |timeIntervalNanoSeconds| output from the |ps4000GetTimebase2()|</span>
 <span class="comment">% function or calculate it using the main Programmer's Guide.</span>
 <span class="comment">% Take into account the downsampling ratio used.</span>
@@ -319,12 +319,12 @@ ylabel(<span class="string">'Voltage (mV)'</span>);
 
 grid <span class="string">on</span>;
 legend(<span class="string">'Channel A'</span>);
-</pre><img vspace="5" hspace="5" src="PS4000_ID_Block_Example_01.png" alt=""> <h2>Stop the Device<a name="11"></a></h2><pre class="codeinput">[status.stop] = invoke(ps4000DeviceObj, <span class="string">'ps4000Stop'</span>);
-</pre><h2>Disconnect Device<a name="12"></a></h2><p>Disconnect device object from hardware.</p><pre class="codeinput">disconnect(ps4000DeviceObj);
+</pre><img vspace="5" hspace="5" src="PS4000_ID_Block_Example_01.png" alt=""> <h2 id="11">Stop the Device</h2><pre class="codeinput">[status.stop] = invoke(ps4000DeviceObj, <span class="string">'ps4000Stop'</span>);
+</pre><h2 id="12">Disconnect Device</h2><p>Disconnect device object from hardware.</p><pre class="codeinput">disconnect(ps4000DeviceObj);
 delete(ps4000DeviceObj);
 </pre><pre class="codeoutput">Connection to PicoScope 4224 with serial number AX407/029 closed successfully.
 Libraries unloaded successfully.
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% PicoScope 4000 Series Instrument Driver Oscilloscope Block Data Capture Example
 % This is an example of an instrument control session using a device 
@@ -360,7 +360,7 @@ Libraries unloaded successfully.
 %% Suggested Input Test Signals
 % This example was published using the following test signals:
 %
-% * Channel A: 2 Vpp, 50 Hz sine wave
+% * Channel A: 4 Vpp, 50 Hz sine wave
 
 %% Clear Command Window and Close any Figures
 
@@ -420,14 +420,14 @@ connect(ps4000DeviceObj);
 % Execute device object function(s).
 [status.setChB] = invoke(ps4000DeviceObj, 'ps4000SetChannel', 1, 0, 1, 8);
 
-if (ps4000DeviceObj.channelCount == 4)
+if (ps4000DeviceObj.channelCount == PicoConstants.QUAD_SCOPE)
 
 	[status.setChC] = invoke(ps4000DeviceObj, 'ps4000SetChannel', 2, 0, 1, 8, 0.0,0);
 	[status.setChD] = invoke(ps4000DeviceObj, 'ps4000SetChannel', 3, 0, 1, 8, 0.0,0);
 	
 end
 
-%% Get Timebase
+%% Verify Timebase Index and Maximum Number of Samples
 % Use the |ps4000GetTimebase2()| function to query the driver as to the
 % suitability of using a particular timebase index and the maximum number
 % of samples available in the segment selected, then set the |timebase|
@@ -442,7 +442,7 @@ end
 
 % Initial call to ps4000GetTimebase2() with parameters:
 %
-% timebase     : 0 
+% timebase     : 2 
 % segment index: 0
 
 status.getTimebase2 = PicoStatus.PICO_INVALID_TIMEBASE;
@@ -535,7 +535,7 @@ downsamplingRatioMode   = ps4000Enuminfo.enRatioMode.RATIO_MODE_NONE;
 figure1 = figure('Name','PicoScope 4000 Series Example - Block Mode Capture', ...
     'NumberTitle','off');
 
-% Calculate time (nanoseconds) and convert to milliseconds
+% Calculate time (nanoseconds) and convert to milliseconds.
 % Use |timeIntervalNanoSeconds| output from the |ps4000GetTimebase2()| 
 % function or calculate it using the main Programmer's Guide.
 % Take into account the downsampling ratio used.

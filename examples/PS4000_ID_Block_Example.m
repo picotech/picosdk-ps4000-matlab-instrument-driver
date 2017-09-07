@@ -32,7 +32,7 @@
 %% Suggested Input Test Signals
 % This example was published using the following test signals:
 %
-% * Channel A: 2 Vpp, 50 Hz sine wave
+% * Channel A: 4 Vpp, 50 Hz sine wave
 
 %% Clear Command Window and Close any Figures
 
