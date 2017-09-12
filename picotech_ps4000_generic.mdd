@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series</InstrumentModel>
-   <InstrumentVersion>1.1.6</InstrumentVersion>
+   <InstrumentVersion>1.1.7</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -17,11 +17,11 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright (C) 2014 - 2017 Pico Technology Ltd. All rights reserved.
+% Copyright © 2014-2017 Pico Technology Ltd. All rights reserved.
 % You may copy and distribute this file as long as it remains unmodified. 
 % SB
     
-    fprintf('\nCopyright (C) 2014 - 2017. Pico Technology Ltd. All rights reserved.\n');
+    fprintf('\nCopyright © 2014-2017 Pico Technology Ltd. All rights reserved.\n');
     fprintf('\n');
     fprintf('PicoScope 4000 Series MATLAB Instrument Driver\n');
     fprintf('\n');
@@ -132,7 +132,7 @@
     
     count = int16(0);
     serials = blanks(100);
-    serialLth = int16(100);
+    serialLth = length(serials);
     
     [status, count, serials, serialLth] = calllib('ps4000', ...
         'ps4000EnumerateUnits',  count, serials, serialLth);
