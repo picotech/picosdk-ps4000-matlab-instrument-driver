@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series</InstrumentModel>
-   <InstrumentVersion>1.1.7</InstrumentVersion>
+   <InstrumentVersion>1.1.8</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -3949,7 +3949,8 @@ For further information on the ps4000NoOfStreamingValues function please refer t
                <Type>MCode</Type>
                <Code>
                   <MCode>function [status, sampleInterval, sampleIntervalTimeUnitsStr] = ps4000RunStreaming(obj, downSampleRatio, overviewBufferSize)
-
+% For group functions, OBJ is the group object. For
+% base device functions, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
     unitHandle = deviceObj.DriverData.unitHandle;
@@ -3972,14 +3973,14 @@ For further information on the ps4000NoOfStreamingValues function please refer t
     % If an interval with component less than the minimum value for the time unit 
     % is specified e.g 1.3e-3, that will be converted to 1300 microseconds.
     
-    if(streamingInterval &lt; 1e-12) % Femtoseconds (unlikely with USB 2.0/USB 3.0)
+    if (streamingInterval &lt; 1e-12) % Femtoseconds (unlikely with USB 2.0/USB 3.0)
         
         sampleInterval = streamingInterval * 1e15;
         sampleIntervalTimeUnits = femtosecondsEnum;
         
-    elseif(streamingInterval &gt;= 1e-12 &amp;&amp; streamingInterval &lt; 1e-9) % Picoseconds
+    elseif (streamingInterval &gt;= 1e-12 &amp;&amp; streamingInterval &lt; 1e-9) % Picoseconds
         
-        if(mod(streamingInterval, 1e-12) &gt; 0)
+        if (mod(streamingInterval, 1e-12) &gt; 0)
         
             sampleInterval = streamingInterval * 1e15;
             sampleIntervalTimeUnits = femtosecondsEnum;
@@ -3991,9 +3992,9 @@ For further information on the ps4000NoOfStreamingValues function please refer t
             
         end
         
-	elseif(streamingInterval &gt;= 1e-9 &amp;&amp; streamingInterval &lt; 1e-6) % Nanoseconds
+    elseif (streamingInterval &gt;= 1e-9 &amp;&amp; streamingInterval &lt; 1e-6) % Nanoseconds
 
-        if(mod(streamingInterval, 1e-9) &gt; 0)
+        if (mod(streamingInterval, 1e-9) &gt; 0)
             
             sampleInterval = streamingInterval * 1e12;
             sampleIntervalTimeUnits = picosecondsEnum;
@@ -4005,9 +4006,9 @@ For further information on the ps4000NoOfStreamingValues function please refer t
             
         end
         
-	elseif(streamingInterval &gt;= 1e-6 &amp;&amp; streamingInterval &lt; 1e-3) % Microseconds
+    elseif (streamingInterval &gt;= 1e-6 &amp;&amp; streamingInterval &lt; 1e-3) % Microseconds
         
-        if(mod(streamingInterval, 1e-6) &gt; 0)
+        if (mod(streamingInterval, 1e-6) &gt; 0)
         
             sampleInterval = streamingInterval * 1e9;
             sampleIntervalTimeUnits = nanosecondsEnum;
@@ -4019,9 +4020,9 @@ For further information on the ps4000NoOfStreamingValues function please refer t
             
         end
         
-    elseif(streamingInterval &gt;= 1e-3 &amp;&amp; streamingInterval &lt; 1) % Milliseconds
+    elseif (streamingInterval &gt;= 1e-3 &amp;&amp; streamingInterval &lt; 1) % Milliseconds
         
-        if(mod(streamingInterval, 1e-3) &gt; 0)
+        if (mod(streamingInterval, 1e-3) &gt; 0)
            
             sampleInterval = streamingInterval * 1e6;
             sampleIntervalTimeUnits = microsecondsEnum;
@@ -4038,7 +4039,7 @@ For further information on the ps4000NoOfStreamingValues function please refer t
         % Already defined seconds 
         
         % 
-        if(mod(sampleInterval, 1) &gt; 0)
+        if (mod(sampleInterval, 1) &gt; 0)
            
            sampleInterval = streamingInterval * 1e3;
            sampleIntervalTimeUnits = millisecondsEnum;
@@ -4055,11 +4056,11 @@ For further information on the ps4000NoOfStreamingValues function please refer t
         deviceObj.DriverData.numPostTriggerSamples, ...
         autoStop, downSampleRatio, overviewBufferSize);
     
-    if(status == PicoStatus.PICO_OK)
+    if (status == PicoStatus.PICO_OK)
            
         if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
             
-            fprintf('ps4000RunStreaming:- Sample interval %d', sampleInterval);
+            fprintf('ps4000RunStreaming:- Sample interval %d ', sampleInterval);
             
         end
         
