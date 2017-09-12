@@ -111,15 +111,15 @@ end
 %
 % Use a while loop to query the function until the status indicates that a
 % valid timebase index has been selected. In this example, the timebase
-% index of 2 is valid.
+% index of 24 is valid.
 
 % Initial call to ps4000GetTimebase2() with parameters:
 %
-% timebase     : 2 
+% timebase     : 24 
 % segment index: 0
 
 status.getTimebase2 = PicoStatus.PICO_INVALID_TIMEBASE;
-timebaseIndex = 2;
+timebaseIndex = 24;
 
 while (status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
     
@@ -153,8 +153,8 @@ set(ps4000DeviceObj, 'timebase', timebaseIndex);
 triggerGroupObj = get(ps4000DeviceObj, 'Trigger');
 triggerGroupObj = triggerGroupObj(1);
 
-% Set device to trigger automatically after 1 second
-set(triggerGroupObj, 'autoTriggerMs', 1000);
+% Set device to trigger automatically after 2 seconds
+set(triggerGroupObj, 'autoTriggerMs', 2000);
 
 % Channel     : 0 (ps4000Enuminfo.enPS4000Channel.PS4000_CHANNEL_A)
 % Threshold   : 500 (mV)
@@ -175,8 +175,8 @@ blockGroupObj = blockGroupObj(1);
 % should not exceed the value of |maxSamples| returned from the call to
 % |ps4000GetTimebase2()|.
 
-set(ps4000DeviceObj, 'numPreTriggerSamples', 500e3);
-set(ps4000DeviceObj, 'numPostTriggerSamples', 500e3);
+set(ps4000DeviceObj, 'numPreTriggerSamples', 5e3);
+set(ps4000DeviceObj, 'numPostTriggerSamples', 5e3);
 
 % Capture a block of data:
 %
@@ -201,9 +201,6 @@ set(ps4000DeviceObj, 'numPostTriggerSamples', 500e3);
 % channel C if using a 4-channel PicoScope.
 [numSamples, overflow, chA] = invoke(blockGroupObj, 'getBlockData', 0, 0, 1, 0);
 
-% Stop the device
-[status.stop] = invoke(ps4000DeviceObj, 'ps4000Stop');
-
 %% Process Data
 % Plot data values, calculate FFT and plot
 
@@ -215,7 +212,7 @@ figure1 = figure('Name','PicoScope 4000 Series Example - Block Mode Capture with
 % function or calculate it using the main Programmer's Guide.
 % Take into account the downsampling ratio used.
 
-timeNs = double(timeIntervalNanoSeconds) * downsamplingRatio * double(0:numSamples - 1);
+timeNs = double(timeIntervalNanoseconds) * downsamplingRatio * double(0:numSamples - 1);
 timeMs = timeNs / 1e6;
 
 % Channel A
@@ -242,7 +239,7 @@ P2 = abs(Y/n);
 P1 = P2(1:n/2+1);
 P1(2:end-1) = 2 * P1(2:end-1);
 
-Fs = 1/(timeIntervalNanoSeconds * 1e-9);
+Fs = 1/(timeIntervalNanoseconds * 1e-9);
 f = 0:(Fs/n):(Fs/2 - Fs/n);
 
 chAFFTAxes = subplot(2,1,2);
@@ -252,6 +249,10 @@ title(chAFFTAxes, 'Single-Sided Amplitude Spectrum of y(t)');
 xlabel(chAFFTAxes, 'Frequency (Hz)');
 ylabel(chAFFTAxes, '|Y(f)|');
 grid(chAFFTAxes, 'on');
+
+%% Stop the Device
+
+[status.stop] = invoke(ps4000DeviceObj, 'ps4000Stop');
 
 %% Disconnect Device
 % Disconnect device object from hardware.
