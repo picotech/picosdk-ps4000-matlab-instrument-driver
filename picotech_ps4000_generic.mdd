@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series</InstrumentModel>
-   <InstrumentVersion>1.1.8</InstrumentVersion>
+   <InstrumentVersion>1.1.9</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -2377,7 +2377,7 @@ For further information on the  ps4000RunBlock and ps4000IsReady functions pleas
         for ch = 1:channelCount
 
             % Set Data Buffer if channel is enabled
-            if(channelSettings(ch, 1) == PicoConstants.TRUE)
+            if (channelSettings(ch, 1) == PicoConstants.TRUE)
 
                 % Store array of libpointers
                 pBuffer(ch, segment) = libpointer('int16Ptr', zeros(totalSamples, 1, 'int16'));
@@ -2386,7 +2386,7 @@ For further information on the  ps4000RunBlock and ps4000IsReady functions pleas
                     unitHandle, (ch - 1), pBuffer(ch, segment), totalSamples, ...
                     (segment - 1));
 
-                if(setBufferStatus(ch, segment) ~= PicoStatus.PICO_OK)
+                if (setBufferStatus(ch, segment) ~= PicoStatus.PICO_OK)
 
                     error('getRapidBlockData: Set Data Buffer for Channel %d Segment % error code %d', ...
                         (ch - 1), (segment - 1), setBufferStatus);
@@ -2419,11 +2419,11 @@ For further information on the  ps4000RunBlock and ps4000IsReady functions pleas
 
     overflow = overflowPtr.Value;
 
-    if(getValuesBulkStatus == PicoStatus.PICO_OK)
+    if (getValuesBulkStatus == PicoStatus.PICO_OK)
 
         if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
             
-            fprintf('getRapidBlockData: Converting to milliVolts and assigning to channel array.\n');
+            fprintf('getRapidBlockData: Converting to millivolts and assigning to channel array.\n');
             
         end
 
@@ -2433,7 +2433,7 @@ For further information on the  ps4000RunBlock and ps4000IsReady functions pleas
         % Retrieve data values for enabled channels
         for ch = 1:channelCount
 
-            if(channelSettings(ch,1) == PicoConstants.TRUE)
+            if (channelSettings(ch,1) == PicoConstants.TRUE)
 
                 scopeInputIndex = channelSettings(ch, 3) + 1;
                 voltageRange = PicoConstants.SCOPE_INPUT_RANGES(scopeInputIndex);
@@ -2448,7 +2448,7 @@ For further information on the  ps4000RunBlock and ps4000IsReady functions pleas
 
                 bufferMatrix = [];
 
-                if(numCaptures &gt; 1)
+                if (numCaptures &gt; 1)
 
                     bufferMatrix = horzcat(bufferCell{1:end});
 
