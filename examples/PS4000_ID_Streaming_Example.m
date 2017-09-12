@@ -1,4 +1,4 @@
-%% PicoScope 2000 Series (A API) Instrument Driver Oscilloscope Streaming Data Capture Example
+%% PicoScope 4000 Series Instrument Driver Oscilloscope Streaming Data Capture Example
 % This is an example of an instrument control session using a device
 % object. The instrument control session comprises all the steps you are
 % likely to take when communicating with your instrument.
@@ -31,13 +31,13 @@
 %
 % *See also:* <matlab:doc('icdevice') |icdevice|> | <matlab:doc('instrument/invoke') |invoke|>
 %
-% *Copyright:* Â© 2015-2017 Pico Technology Ltd. See LICENSE file for terms.
+% *Copyright:* © 2015-2017 Pico Technology Ltd. See LICENSE file for terms.
 
 %% Suggested Input Test Signals
 % This example was published using the following test signals:
 %
-% * Channel A: 3 Vpp, 1 Hz Sine wave
-% * Channel B: 2 Vpp, 4 Hz Square wave 
+% * Channel A: 3 Vpp, 1 Hz sine wave
+% * Channel B: 2 Vpp, 4 Hz square wave 
 
 %% Clear Command Window and Close any Figures
 
@@ -102,14 +102,14 @@ channelSettings(1).enabled = PicoConstants.TRUE;
 channelSettings(1).coupling = 1;
 channelSettings(1).range = ps4000Enuminfo.enPS4000Range.PS4000_2V;
 
-channelARangeMV = PicoConstants.SCOPE_INPUT_RANGES(channelSettings(1).range + 1);
+channelARangeMv = PicoConstants.SCOPE_INPUT_RANGES(channelSettings(1).range + 1);
 
 % Channel B
 channelSettings(2).enabled = PicoConstants.TRUE;
 channelSettings(2).coupling = 1;
-channelSettings(2).range = ps4000Enuminfo.enPS4000Range.PS4000_2V;
+channelSettings(2).range = ps4000Enuminfo.enPS4000Range.PS4000_5V;
 
-channelBRangeMV = PicoConstants.SCOPE_INPUT_RANGES(channelSettings(2).range + 1);
+channelBRangeMv = PicoConstants.SCOPE_INPUT_RANGES(channelSettings(2).range + 1);
 
 if (numChannels == PicoConstants.QUAD_SCOPE)
 
@@ -312,8 +312,8 @@ if (plotLiveData == PicoConstants.TRUE)
     
 end
 
-% Get data values as long as power status has not changed (check for STOP button push inside loop)
-while(hasAutoStopped == PicoConstants.FALSE && status.getStreamingLatestValues == PicoStatus.PICO_OK)
+% Get data values as long as autoStop flag is not set (check for STOP button push inside loop)
+while (hasAutoStopped == PicoConstants.FALSE && status.getStreamingLatestValues == PicoStatus.PICO_OK)
     
     ready = PicoConstants.FALSE;
    
@@ -373,8 +373,8 @@ while(hasAutoStopped == PicoConstants.FALSE && status.getStreamingLatestValues =
         lastValuePosn = startIndex + newSamples;
         
         % Convert data values to millivolts from the application buffers
-        bufferChAmV = adc2mv(pAppBufferChA.Value(firstValuePosn:lastValuePosn), channelARangeMV, maxADCCount);
-        bufferChBmV = adc2mv(pAppBufferChB.Value(firstValuePosn:lastValuePosn), channelBRangeMV, maxADCCount);
+        bufferChAmV = adc2mv(pAppBufferChA.Value(firstValuePosn:lastValuePosn), channelARangeMv, maxADCCount);
+        bufferChBmV = adc2mv(pAppBufferChB.Value(firstValuePosn:lastValuePosn), channelBRangeMv, maxADCCount);
 
         % Process collected data further if required - this example plots
         % the data if the User has selected 'Yes' at the prompt.
@@ -391,7 +391,7 @@ while(hasAutoStopped == PicoConstants.FALSE && status.getStreamingLatestValues =
         
             plot(time, bufferChAmV, time, bufferChBmV);
 
-        end;
+        end
 
         % Clear variables for use again
         clear bufferChAMV;
@@ -453,21 +453,23 @@ end
 
 fprintf('\n');
 
-%% Find the Number of Samples.
-% This is the number of samples held in the driver itself. The actual
-% number of samples collected when using a trigger is likely to be greater.
-[status.noOfStreamingValues, numStreamingValues] = invoke(streamingGroupObj, 'ps4000NoOfStreamingValues');
-
-fprintf('Number of samples available from the driver: %u.\n\n', numStreamingValues);
-
 %% Stop the Device
 % This function should be called regardless of whether auto stop is enabled
 % or not.
 
 status.stop = invoke(ps4000DeviceObj, 'ps4000Stop');
 
+%% Find the Number of Samples.
+% This is the number of samples held in the driver itself. The actual
+% number of samples collected when using a trigger is likely to be greater.
+
+[status.noOfStreamingValues, numStreamingValues] = invoke(streamingGroupObj, 'ps4000NoOfStreamingValues');
+
+fprintf('Number of samples available from the driver: %u.\n\n', numStreamingValues);
+
 %% Process Data
-% Process data post-capture if required - here the data will be plotted.
+% Process data post-capture if required - here the data will be plotted in
+% a new figure.
 
 % Reduce size of arrays if required
 if (totalSamples < maxSamples)
@@ -482,12 +484,12 @@ channelAFinal = pBufferChAFinal.Value();
 channelBFinal = pBufferChBFinal.Value();
 
 % Plot total data collected on another figure.
-finalFigure = = figure('Name','PicoScope 4000 Series Example - Streaming Mode Capture', ...
+finalFigure = figure('Name','PicoScope 4000 Series Example - Streaming Mode Capture', ...
     'NumberTitle','off');
 	
 finalFigureAxes = axes('Parent', finalFigure);
 movegui(finalFigure, 'east');
-hold on;
+hold(finalFigureAxes, 'on');
 
 title(finalFigureAxes, 'Streaming Data Acquisition (Final)');
 
@@ -505,12 +507,12 @@ end
 ylabel(finalFigureAxes, 'Voltage (mV)');
 
 % Find the maximum voltage range
-maxYRange = max(channelARangeMV, channelBRangeMV);
+maxYRange = max(channelARangeMv, channelBRangeMv);
 ylim(finalFigureAxes,[(-1 * maxYRange) maxYRange]);
 
 % Calculate values for time axis, then plot.
-timeAxis = (double(actualSampleInterval) * double(downSampleRatio)) * [0:length(channelAFinal) - 1];
-plot(time, channelAFinal, time, channelBFinal);
+timeAxisValues = (double(actualSampleInterval) * double(downSampleRatio)) * (0:length(channelAFinal) - 1);
+plot(finalFigureAxes, timeAxisValues, channelAFinal, timeAxisValues, channelBFinal);
 
 grid(finalFigureAxes, 'on');
 legend(finalFigureAxes, 'Channel A', 'Channel B');
