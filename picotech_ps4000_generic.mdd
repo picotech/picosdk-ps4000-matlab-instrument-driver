@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series</InstrumentModel>
-   <InstrumentVersion>1.1.9</InstrumentVersion>
+   <InstrumentVersion>1.1.10</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -124,6 +124,9 @@
     % -------------------------------
     
     obj.DriverData.displayOutput = obj.displayOutput;
+    
+    % Default external trigger range for the PicoScope 4262
+    obj.DriverData.extTriggerRange = obj.DriverData.enums.enPS4000Range.PS4000_5V;
     
     % Enumerate units 
     % ---------------
@@ -3024,6 +3027,51 @@ To output a signal with constant frequency, ensure that stopFrequency is equal t
          </PropertyInfo>
          <MethodInfo>
             <Method>
+               <Name>ps4000SetExtTriggerRange</Name>
+               <Location>signalgenerator</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <MCode>function ps4000SetExtTriggerRange(obj, extRange)
+% For group functions, OBJ is the group object. For
+% base device functions, OBJ is the device object.
+
+    deviceObj = get(obj, 'Parent');
+    
+            
+    if (extRange ~= deviceObj.DriverData.enums.enPS4000Range.PS4000_500MV || ...
+            extRange ~= deviceObj.DriverData.enums.enPS4000Range.PS4000_5V)
+       
+        warning('PS4000InstrumentDriver:InvalidExtTriggerRange', ...
+            'Invalid external trigger range, setting to ±5 V');
+        
+        extRange = deviceObj.DriverData.enums.enPS4000Range.PS4000_5V;
+        
+    end
+    
+    status = calllib('ps4000', 'ps4000SetExtTriggerRange', ...
+                deviceObj.DriverData.unitHandle, extRange);
+
+	if (status ~= PicoStatus.PICO_OK)
+           
+        error('ps4000SetExtTriggerRange:- status code: %d. Please refer to the PicoStatus.m file.', status);
+        
+    end </MCode>
+               </Code>
+               <Description>ps4000SetExtTriggerRange(obj, extRange) sets the range of the external trigger for the PicoScope 4262.
+
+This function may be used with the Test and Measurement Tool.
+
+Input parameters:
+
+obj - the object representing the Signalgenerator group.
+extRange - set to either the ±500 mV (enPS4000Range.PS4000_500MV) or ±5 V (enPS4000Range.PS4000_5V) range.
+
+Output parameters:
+
+status - status code returned by the driver.</Description>
+            </Method>
+            <Method>
                <Name>ps4000SigGenSoftwareControl</Name>
                <Location>signalgenerator</Location>
                <CapabilityGroup>Base</CapabilityGroup>
@@ -3385,8 +3433,7 @@ For further information on the ps4000SetSigGenArbitrary function please refer to
             
         end
         
-        % External trigger not used
-        extInThreshold = 0
+        % Calculate extInThreshold from millivolt value
 
         status = calllib('ps4000', 'ps4000SetSigGenBuiltIn', deviceObj.DriverData.unitHandle, ...
                     offsetVoltageUV, peakToPeakVoltageUV, waveType, ...
