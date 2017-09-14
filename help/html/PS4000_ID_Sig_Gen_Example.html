@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PicoScope 4000 Series Instrument Driver Signal Generator Example</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-09-13"><meta name="DC.source" content="PS4000_ID_Sig_Gen_Example.m"><style type="text/css">
+      --><title>PicoScope 4000 Series Instrument Driver Signal Generator Example</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-09-14"><meta name="DC.source" content="PS4000_ID_Sig_Gen_Example.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -102,6 +102,22 @@ Copyright &copy; 2014-2017 Pico Technology Ltd. All rights reserved.
 
 PicoScope 4000 Series MATLAB Instrument Driver
 
+
+   Instrument Device Object Using Driver : picotech_ps4000_generic.mdd
+ 
+   Instrument Information
+      Type:               Oscilloscope
+      Manufacturer:       Pico Technology Ltd.
+      Model:              PicoScope 4000 Series
+ 
+   Driver Information
+      DriverType:         MATLAB generic
+      DriverName:         picotech_ps4000_generic.mdd
+      DriverVersion:      1.1.12
+ 
+   Communication State
+      Status:             closed
+
 Number of units found: 1
 
 Serial number(s): AW737/105
@@ -117,7 +133,7 @@ Opening PicoScope 4000 Series device...
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000_generic.mdd
-      DriverVersion:      1.1.9
+      DriverVersion:      1.1.12
  
    Communication State
       Status:             open
@@ -150,7 +166,7 @@ Turning off trigger...
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000_generic.mdd
-      DriverVersion:      1.1.9
+      DriverVersion:      1.1.12
  
    Communication State
       Status:             open
@@ -210,11 +226,6 @@ set(ps4000DeviceObj.Signalgenerator(1), <span class="string">'peakToPeakVoltage'
 <span class="comment">% Ext. Threshold : 0</span>
 
 [status.setSigGenBuiltIn] = invoke(sigGenGroupObj, <span class="string">'setSigGenBuiltIn'</span>, 1, 50.0, 1, 1, 0, 0, 0, 0, 0, 0);
-</pre><pre class="codeoutput">
-extInThreshold =
-
-     0
-
 </pre><p><img vspace="5" hspace="5" src="../images/ps4000_square_wave_sweep_500Hz.PNG" alt=""> </p><p><img vspace="5" hspace="5" src="../images/ps4000_square_wave_sweep_200Hz.PNG" alt=""> </p><h2 id="11">Turn Off Signal Generator</h2><p>Sets the output to 0 V DC</p><pre class="codeinput">[status.setSigGenOff] = invoke(sigGenGroupObj, <span class="string">'setSigGenOff'</span>);
 </pre><p><img vspace="5" hspace="5" src="../images/ps4000_sig_gen_off.PNG" alt=""> </p><h2 id="13">Arbitrary Waveform Generator - Set Parameters</h2><p>Set parameters (2000 mVpp, 0 mV offset, 2000 Hz frequency) and define an arbitrary waveform.</p><pre class="codeinput"><span class="comment">% Configure property value(s).</span>
 set(ps4000DeviceObj.Signalgenerator(1), <span class="string">'startFrequency'</span>, 2000.0);
