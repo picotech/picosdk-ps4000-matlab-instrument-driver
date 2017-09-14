@@ -55,7 +55,7 @@ classdef PS4000Constants
         PS4000_SIGGEN_MAXPKTOPK         = 4000000;   
         
         PS4262_MAX_WAVEFORM_BUFFER_SIZE = 4096;
-        PS4262_MIN_DWELL_COUNT          = 3;
+        MIN_DWELL_COUNT_4262            = 3;
         
         MAX_SWEEPS_SHOTS				= pow2(30) - 1; 
 
