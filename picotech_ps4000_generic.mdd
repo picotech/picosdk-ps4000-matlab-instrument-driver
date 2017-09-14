@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series</InstrumentModel>
-   <InstrumentVersion>1.1.10</InstrumentVersion>
+   <InstrumentVersion>1.1.11</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -97,12 +97,63 @@
     [~, obj.DriverData.structs, obj.DriverData.enums, ~] = ps4000MFile(); 
     [~, ~, obj.DriverData.wrapEnums, ~] = ps4000WrapMFile();
     
-    
-    
     % Maximum number of devices using this driver
     % -------------------------------------------
     
     obj.DriverData.constants.PS4000_MAX_UNITS = 64;
+    
+    % Define constant values used by this Instrument Driver
+    % =====================================================
+    
+    % Constants from ps4000Api.h header file
+    % ---------------------------------------
+    
+    % ETS Mode properties
+    obj.DriverData.constants.PS4000_MAX_ETS_CYCLES           = 400;		
+    obj.DriverData.constants.PS4000_MAX_ETS_INTERLEAVE       = 80;
+        
+    obj.DriverData.constants.PS4262_MAX_VALUE                = 32767;
+    obj.DriverData.constants.PS4262_MIN_VALUE                = -32767;
+        
+    obj.DriverData.constants.PS4000_MAX_VALUE                = 32764;
+    obj.DriverData.constants.PS4000_MIN_VALUE                = -32764;
+        
+    % External Trigger Input ADC Count
+    obj.DriverData.constants.PS4000_EXT_MAX_VALUE            = 32767;
+    obj.DriverData.constants.PS4000_EXT_MIN_VALUE            = -32767;
+        
+    obj.DriverData.constants.MAX_PULSE_WIDTH_QUALIFIER_COUNT = 16777215;
+    obj.DriverData.constants.MAX_DELAY_COUNT                 = 8388607;
+		
+    % Function/Arbitrary Waveform Parameters
+	obj.DriverData.constants.MIN_SIG_GEN_FREQ                = 0.0;
+    obj.DriverData.constants.MAX_SIG_GEN_FREQ                = 100000.0;
+    obj.DriverData.constants.MAX_SIG_GEN_FREQ_4262           = 20000.0;
+
+    obj.DriverData.constants.MIN_SIG_GEN_BUFFER_SIZE         = 1;
+    obj.DriverData.constants.MAX_SIG_GEN_BUFFER_SIZE         = PicoConstants.AWG_BUFFER_8KS;
+    obj.DriverData.constants.MIN_DWELL_COUNT                 = 10;
+        
+    obj.DriverData.constants.PS4262_SIGGEN_MAXPKTOPK         = 2000000;
+    obj.DriverData.constants.PS4000_SIGGEN_MAXPKTOPK         = 4000000;   
+        
+    obj.DriverData.constants.PS4262_MAX_WAVEFORM_BUFFER_SIZE = 4096;
+    obj.DriverData.constants.PS4262_MIN_DWELL_COUNT          = 3;
+        
+    obj.DriverData.constants.MAX_SWEEPS_SHOTS                = pow2(30) - 1; 
+
+    % Frequencies
+        
+    obj.DriverData.constants.PS4000_SINE_MAX_FREQUENCY		= 20000000;
+    obj.DriverData.constants.PS4000_SQUARE_MAX_FREQUENCY    = 20000000;
+    obj.DriverData.constants.PS4000_TRIANGLE_MAX_FREQUENCY	= 20000000;
+    obj.DriverData.constants.PS4000_SINC_MAX_FREQUENCY		= 20000000
+    obj.DriverData.constants.PS4000_RAMP_MAX_FREQUENCY		= 20000000;
+    obj.DriverData.constants.PS4000_HALF_SINE_MAX_FREQUENCY	= 20000000;
+    obj.DriverData.constants.PS4000_GAUSSIAN_MAX_FREQUENCY  = 20000000;
+    obj.DriverData.constants.PS4000_PRBS_MAX_FREQUENCY		= 1000000;
+    obj.DriverData.constants.PS4000_PRBS_MIN_FREQUENCY		= 0.03;
+    obj.DriverData.constants.PS4000_MIN_FREQUENCY			= 0.03;
     
     
     % Confirm data files have been loaded
@@ -305,8 +356,6 @@
         fprintf(' Signal Generator Type: %s\n', sigGenType);
 
         fprintf('\n');
-
-        % DEBUG - Display status (will not display in TMTOOL)
 
     elseif(connectStatus.openUnit == PicoStatus.PICO_NOT_FOUND)
 
@@ -1535,43 +1584,50 @@ For further information on the ps4000SetDataBuffer function please refer to the 
                <CapabilityGroup>Base</CapabilityGroup>
                <Type>MCode</Type>
                <Code>
-                  <MCode>function status = ps4000SetExtTriggerRange(obj, range)
+                  <MCode>function status = ps4000SetExtTriggerRange(obj, extRange)
 % If this is a group function, OBJ is the group object. If
 % it a base device function, OBJ is the device object.
  
     if (obj.InstrumentModel == '4262')
         
+        if (extRange ~= obj.DriverData.enums.enPS4000Range.PS4000_500MV || ...
+                extRange ~= obj.DriverData.enums.enPS4000Range.PS4000_5V)
+
+            warning('PS4000InstrumentDriver:InvalidExtTriggerRange', ...
+                'Invalid external trigger range, setting to ±5 V');
+
+            extRange = obj.DriverData.enums.enPS4000Range.PS4000_5V;
+
+        end
+
         status = calllib('ps4000', 'ps4000SetExtTriggerRange', ...
-        obj.DriverData.unitHandle, range);
-    
-        obj.DriverData.extRange = range;
-    
-        if(status ~= PicoStatus.PICO_OK)
-            
-            error('ps4000SetExtTriggerRange: error code %d\n', status);
-            
-        end    
-        
-    else
-        
-        error('this function is not support on this device');
+                    obj.DriverData.unitHandle, extRange);
+
+        % Update device object's extTriggerRange property
+        if (status == PicoStatus.PICO_OK)
+
+            obj.DriverData.extTriggerRange = extRange;
+
+        else
+
+            error('ps4000SetExtTriggerRange:- status code: %d. Please refer to the PicoStatus.m file.', status);
+
+        end 
         
     end</MCode>
                </Code>
-               <Description>function status = ps4000SetExtTriggerRange(obj, range) specifies the range of the external trigger (can only be used with 4262)
+               <Description>ps4000SetExtTriggerRange(obj, extRange) sets the range of the external trigger for the PicoScope 4262.
 
 This function may be used with the Test and Measurement Tool.
 
 Input parameters:
 
-obj - the object representing the device.
-range - PS4000_500MV or PS4000_5V
+obj - the object representing the Signalgenerator group.
+extRange - set to either the ±500 mV (enPS4000Range.PS4000_500MV) or ±5 V (enPS4000Range.PS4000_5V) range.
 
 Output parameters:
 
-status - status code returned by the driver.
-
-For further information on the ps4000SetExtTriggerRange function please refer to the PicoScope 4000 Series PC Oscilloscopes Programmer's Guide.</Description>
+status - status code returned by the driver.</Description>
             </Method>
             <Method>
                <Name>ps4000Stop</Name>
@@ -3027,51 +3083,6 @@ To output a signal with constant frequency, ensure that stopFrequency is equal t
          </PropertyInfo>
          <MethodInfo>
             <Method>
-               <Name>ps4000SetExtTriggerRange</Name>
-               <Location>signalgenerator</Location>
-               <CapabilityGroup>Base</CapabilityGroup>
-               <Type>MCode</Type>
-               <Code>
-                  <MCode>function ps4000SetExtTriggerRange(obj, extRange)
-% For group functions, OBJ is the group object. For
-% base device functions, OBJ is the device object.
-
-    deviceObj = get(obj, 'Parent');
-    
-            
-    if (extRange ~= deviceObj.DriverData.enums.enPS4000Range.PS4000_500MV || ...
-            extRange ~= deviceObj.DriverData.enums.enPS4000Range.PS4000_5V)
-       
-        warning('PS4000InstrumentDriver:InvalidExtTriggerRange', ...
-            'Invalid external trigger range, setting to ±5 V');
-        
-        extRange = deviceObj.DriverData.enums.enPS4000Range.PS4000_5V;
-        
-    end
-    
-    status = calllib('ps4000', 'ps4000SetExtTriggerRange', ...
-                deviceObj.DriverData.unitHandle, extRange);
-
-	if (status ~= PicoStatus.PICO_OK)
-           
-        error('ps4000SetExtTriggerRange:- status code: %d. Please refer to the PicoStatus.m file.', status);
-        
-    end </MCode>
-               </Code>
-               <Description>ps4000SetExtTriggerRange(obj, extRange) sets the range of the external trigger for the PicoScope 4262.
-
-This function may be used with the Test and Measurement Tool.
-
-Input parameters:
-
-obj - the object representing the Signalgenerator group.
-extRange - set to either the ±500 mV (enPS4000Range.PS4000_500MV) or ±5 V (enPS4000Range.PS4000_5V) range.
-
-Output parameters:
-
-status - status code returned by the driver.</Description>
-            </Method>
-            <Method>
                <Name>ps4000SigGenSoftwareControl</Name>
                <Location>signalgenerator</Location>
                <CapabilityGroup>Base</CapabilityGroup>
@@ -3120,12 +3131,12 @@ For further information on the ps4000SigGenSoftwareControl function please refer
     deviceObj = get(obj, 'Parent');
 
     % Only call function if device has an Arbitrary Waveform Generator
-    if(get(obj, 'sigGenType') == PicoConstants.SIG_GEN_AWG)
+    if (get(obj, 'sigGenType') == PicoConstants.SIG_GEN_AWG)
 
         offsetVoltageUV = deviceObj.DriverData.offsetVoltage * 1e3;
         peakToPeakVoltageUV = deviceObj.DriverData.peakToPeakVoltage * 1e3;
         
-        if(abs(offsetVoltageUV + peakToPeakVoltageUV) &gt; deviceObj.DriverData.maxPktoPk)
+        if (abs(offsetVoltageUV + peakToPeakVoltageUV) &gt; deviceObj.DriverData.maxPktoPk)
             
             error('setSigGenBuiltInSimple: The sum of offsetVoltage and peakToPeakVoltage cannot exceed +/-4000mV. (or +/- 2000mV for the 4262)');
             
@@ -3134,7 +3145,7 @@ For further information on the ps4000SigGenSoftwareControl function please refer
         dacFrequency = get(obj, 'dacFrequency');
         
         % Convert the waveform to the range for the driver
-        if(deviceObj.InstrumentModel == '4262')
+        if (deviceObj.InstrumentModel == '4262')
             
             arbitraryWave = int16(arbitraryWaveform * double(intmax('int16')));
             
@@ -3156,7 +3167,7 @@ For further information on the ps4000SigGenSoftwareControl function please refer
         
         stopFrequency = get(obj, 'stopFrequency');
         
-        if(stopFrequency == startFrequency)
+        if (stopFrequency == startFrequency)
 
             stopDeltaPhase = startDeltaPhase;
 
@@ -3175,7 +3186,7 @@ For further information on the ps4000SigGenSoftwareControl function please refer
 
         dwellCount = round(dwellTime * dacFrequency); % Round to the nearest integer
         
-        if(dwellCount &lt; obj.dwellTime)
+        if (dwellCount &lt; obj.dwellTime)
 
             dwellCount = obj.dwellTime;
 
@@ -3185,8 +3196,18 @@ For further information on the ps4000SigGenSoftwareControl function please refer
         % modified.
         dwellTime = dwellCount / dacFrequency;
         
-        % No external trigger for PicoScope 4824
-        extInThreshold = 0;
+        % Calculate external threshold value in counts
+        maxADCValue = obj.DriverData.constants.PS4000_MAX_VALUE;
+        
+        if (deviceObj.InstrumentModel == '4262')
+        
+            maxADCValue = obj.DriverData.constants.PS4262_MAX_VALUE;
+            
+        end
+        
+        extInThreshold = mv2adc(extInThresholdMV, ...
+            PicoConstants.SCOPE_INPUT_RANGES(deviceObj.DriverData.extTriggerRange + 1), ...
+            maxADCValue);
 
         status = calllib('ps4000', 'ps4000SetSigGenArbitrary', ...
                     deviceObj.DriverData.unitHandle, ...
@@ -3196,9 +3217,9 @@ For further information on the ps4000SigGenSoftwareControl function please refer
                     sweeps, triggerType, triggerSource, extInThreshold);
          
         % Output error message to user if status is not PICO_OK        
-        if(status ~= PicoStatus.PICO_OK)
+        if (status ~= PicoStatus.PICO_OK)
                     
-            switch(status)
+            switch (status)
 
                 case PicoStatus.PICO_SIG_GEN_PARAM
                     
@@ -3417,23 +3438,34 @@ For further information on the ps4000SetSigGenArbitrary function please refer to
 % base device functions, OBJ is the device object.
     
     deviceObj = get(obj, 'Parent');
-    sigGenType = get(obj, 'sigGenType');
+    sigGenType = deviceObj.DriverData.sigGenType
     
     % Error checking
-    if(sigGenType == PicoConstants.SIG_GEN_AWG || ...
+    if (sigGenType == PicoConstants.SIG_GEN_AWG || ...
             sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN)
         
         % Convert millivolt values to microvolts  
         offsetVoltageUV = deviceObj.DriverData.offsetVoltage * 1e3;
         peakToPeakVoltageUV = deviceObj.DriverData.peakToPeakVoltage * 1e3;
         
-        if(abs(offsetVoltageUV + peakToPeakVoltageUV) &gt; deviceObj.DriverData.maxPktoPk)
+        if (abs(offsetVoltageUV + peakToPeakVoltageUV) &gt; deviceObj.DriverData.maxPktoPk)
             
             error('setSigGenBuiltInSimple: The sum of offsetVoltage and peakToPeakVoltage cannot exceed +/-4000mV.');
             
         end
         
-        % Calculate extInThreshold from millivolt value
+        % Calculate external threshold value in counts
+        maxADCValue = obj.DriverData.constants.PS4000_MAX_VALUE;
+        
+        if (deviceObj.InstrumentModel == '4262')
+        
+            maxADCValue = obj.DriverData.constants.PS4262_MAX_VALUE;
+            
+        end
+        
+        extInThreshold = mv2adc(extInThresholdMV, ...
+            PicoConstants.SCOPE_INPUT_RANGES(deviceObj.DriverData.extTriggerRange + 1), ...
+            maxADCValue);
 
         status = calllib('ps4000', 'ps4000SetSigGenBuiltIn', deviceObj.DriverData.unitHandle, ...
                     offsetVoltageUV, peakToPeakVoltageUV, waveType, ...
@@ -3442,7 +3474,7 @@ For further information on the ps4000SetSigGenArbitrary function please refer to
                     triggerType, triggerSource, extInThreshold);
 
         % Output error message to user if status is not PICO_OK        
-        if(status ~= PicoStatus.PICO_OK)
+        if (status ~= PicoStatus.PICO_OK)
 
             switch(status)
 
