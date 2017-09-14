@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series</InstrumentModel>
-   <InstrumentVersion>1.1.11</InstrumentVersion>
+   <InstrumentVersion>1.1.12</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -3197,11 +3197,11 @@ For further information on the ps4000SigGenSoftwareControl function please refer
         dwellTime = dwellCount / dacFrequency;
         
         % Calculate external threshold value in counts
-        maxADCValue = obj.DriverData.constants.PS4000_MAX_VALUE;
+        maxADCValue = deviceObj.DriverData.constants.PS4000_MAX_VALUE;
         
         if (deviceObj.InstrumentModel == '4262')
         
-            maxADCValue = obj.DriverData.constants.PS4262_MAX_VALUE;
+            maxADCValue = deviceObj.DriverData.constants.PS4262_MAX_VALUE;
             
         end
         
@@ -3438,7 +3438,7 @@ For further information on the ps4000SetSigGenArbitrary function please refer to
 % base device functions, OBJ is the device object.
     
     deviceObj = get(obj, 'Parent');
-    sigGenType = deviceObj.DriverData.sigGenType
+    sigGenType = deviceObj.DriverData.sigGenType;
     
     % Error checking
     if (sigGenType == PicoConstants.SIG_GEN_AWG || ...
@@ -3455,18 +3455,18 @@ For further information on the ps4000SetSigGenArbitrary function please refer to
         end
         
         % Calculate external threshold value in counts
-        maxADCValue = obj.DriverData.constants.PS4000_MAX_VALUE;
-        
+        maxADCValue = deviceObj.DriverData.constants.PS4000_MAX_VALUE;
+
         if (deviceObj.InstrumentModel == '4262')
         
-            maxADCValue = obj.DriverData.constants.PS4262_MAX_VALUE;
+            maxADCValue = deviceObj.DriverData.constants.PS4262_MAX_VALUE;
             
         end
         
         extInThreshold = mv2adc(extInThresholdMV, ...
             PicoConstants.SCOPE_INPUT_RANGES(deviceObj.DriverData.extTriggerRange + 1), ...
             maxADCValue);
-
+        
         status = calllib('ps4000', 'ps4000SetSigGenBuiltIn', deviceObj.DriverData.unitHandle, ...
                     offsetVoltageUV, peakToPeakVoltageUV, waveType, ...
                     deviceObj.DriverData.startFrequency, deviceObj.DriverData.stopFrequency, ...
